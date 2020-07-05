@@ -1,0 +1,30 @@
+{
+  "name": "pruebas",
+  "version": "1.0.0",
+  "description": "pruebas nodejs youtube",
+  "main": "index.js",
+  "dependencies": {
+    "colors": "^1.4.0",
+    "express": "^4.17.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jaliagag/tp3_acamica.git"
+  },
+  "keywords": [
+    "acamica",
+    "nodejs",
+    "prueba",
+    "test"
+  ],
+  "author": "jaliaga",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jaliagag/tp3_acamica/issues"
+  },
+  "homepage": "https://github.com/jaliagag/tp3_acamica#readme"
+}
