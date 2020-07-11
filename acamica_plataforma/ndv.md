@@ -352,3 +352,167 @@ app.use(function(err, req, res, next) {
 
 - [Documentación oficial de express](https://expressjs.com/en/guide/error-handling.html)
 - [Listado de _status codes_ disponibles](https://developer.mozilla.org/es/docs/Web/HTTP/Status)
+
+Estado del servidor
+
+```js
+const express = require("express");
+const bodyParser = require("body-parser")
+const app = express();
+
+app.use(bodyParser.json());
+
+app.get("/", (req, res) => {
+  res.send("Menu");
+});
+
+let platos = [];
+
+app.get("/platos", (req, res) => {
+  res.json(platos);
+})
+
+app.post("/platos", (req, res) => {
+  platos.push(req.body);
+  console.log("Plato agregado al array");
+  res.json(req.body);
+});
+
+app.listen(3000, () => {
+  console.log("Servidor iniciado");
+});
+```
+
+Con este servidor iniciado, lo que hacemos es iniciar Postman. Si hacemos un 'get' al endpoint /platos, nos devuelve un array vacío. Como agregamos un método post, podemos agregar información, en formato json, de los distintos platos con sus precios o cualquier cosa.
+
+Para eso, en postman ponemos método post, body > raw > json y ponemos el texto y le decimos enviar.
+
+Si volvemos a hacer get al endpoint /platos, tenemos nuestro plato recién agregado. Así podemos agregar tantos platos como querramos. Si hacemos una variación en el código del servidor, este se reiniciará _LO CUAL VA A HACER QUE SE BORRE LO QUE HABÍAMOS AGREGADO_: estamos usando una viarable que se guarda en memoria en node para guardar los platos; cada vez que reiniciamos el servidor, esta variable se vuelve a setear, no es persistente esta información.
+
+Actividad
+
+El objetivo de esta actividad es crear una API RESTful, donde debes crear los endpoints necesarios para interactuar con el recurso de ítems en una api de listado de que haceres o “ToDo List”.
+
+Esta API va a tener un solo recurso, llamado ítems, que tienen la siguiente estructura.
+
+```json
+{
+  "id": 1,
+  "title": "Hacer Actividad API REST",
+  "completed": false
+}
+```
+
+A través de los endpoints de /items de GET y POST debes interactuar con el estado almacenado en un array en el servidor. Adicionalmente es necesario soportar una ruta como /items/:id con los métodos PUT y DELETE, para modificar un ítem creado.
+
+## Express con autenticación y seguridad
+
+JSON web token > estándar que define una forma segura de transmitir información entre el cliente y el servidor. Transmite con formato de JSON y son muy seguros.
+
+El JWT se suele utilizar para la autorización de un cliente. Por ejemplo, una vez que el cliente envía su usuario y contraseña, el servidor lo autentifica y le retorna al cliente un texto. Este texto es una especie de firma digital, donde el servidor encripta un objeto JSON, con una clave segura, y se lo envía. Luego, en llamadas posteriores, el cliente utiliza este token para autorizar su llamada. El servidor puede validar el token, utilizando la misma clave segura con la que firmó originalmente.
+
+El JWT está formado por tres partes de contenido, la cabecera, el payload o contenido, y la firma, todos estos separados por un punto (.).
+
+```md
+xxxxxxxx.yyyyyyyyyy.zzzzzzzzzzzzzzzz
+cabecera.payload.firma
+```
+
+El contenido se almacena en Base64 y puede desencodear sin la necesidad de una clave, pero no puede ser verificado sin esa clave.
+
+Para utilizar JWT en node, debemos instalar el paquete `jsonwebtoken`. Via npm es sencillamente `npm install jsonwebtoken`.
+
+Para firmar un token, debemos indicar primero una firma o contraseña segura, posteriormente utilizar la función `sign` para generar el token.
+
+```js
+const jwt = require("jsonwebtoken");
+
+const secreto = "AlgunSecret0";
+const token = jwt.sign({
+  nombre: "Sergio",
+}, secreto);
+
+// Imprimir token generado
+console.log(token);
+```
+
+[Página oficial de JWT](https://jwt.io/)
+
+Para poder decodificar el token enviado por el usuario, validarlo con nuestra firma y obtener el contenido, utilizamos la función `verify`.
+
+```js
+const jwt = require("jsonwebtocken");
+
+const secreto = "AlgunSecret0";
+const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub21icmUiOiJTZXJnaW8iLCJpYXQiOjE1NjQzNjI4MzZ9.7KlnZB8UqphUtqrRVaboRVLYPYGIByNWjQBeW3c97Bs";
+const descodificado = jwt.verify(token, secreto)
+console.log(descodificado);
+```
+
+```js
+const express = require("express");
+const bodyParser = require("body-parser");
+const jwt = require("jsonwebtoken");
+const app = express();
+
+app.use(bodyParser.json());
+
+app.get("/", (req, res) => {
+  res.send("Menu");
+});
+
+const usuarios = [
+  {
+    usuario: "Sergio",
+    contrasena: "supersegura"
+  }
+]
+
+function validarUsuarioContrasena(usuario, contrasena) {
+  const [filtrarUsuario] = usuarios.filter(fila => fila.usuario === usuario && fila.contrasena === contrasena)
+  if (!filtrarUsuario) {
+    return false;
+  }
+  return filtrarUsuario;
+}
+
+app.post("/login", (req, res) => {
+  const {usuario, contrasena} = req.body;
+  const validado = validarUsuarioContrasena(usuario, contrasena);
+  if (!validado) {
+    res.json({error: "No existe el usuario o la contraseña es incorrecta"});
+    return;
+  }
+
+  const token = jwt.sign({ // firmando el token
+    usuario // payload
+  }, "secretoJWT#ssh"); // clave segura que está en el servidor y no compartirla
+
+  res.json({ token }); // se lo enviamos al cliente
+})
+
+app.listen(3000, () => {
+  console.log("Servidor iniciado");
+})
+```
+
+Obtener el token del cliente para autenticarlo y permitir que acceda a una ruta segura por medio de un middleware. Agregamos:
+
+```js
+const autenticarUsuario = (req, res, next) => {
+  try {
+    const token = req.headers.authorization.split(" ")[1]; // obtiene el token
+    const verificarToken = jwt.verify(token, "secretoJWT#ssh"); // verificar el toquen con jwt.verify - el secreto debe ser el mismo
+    if (verificarToken) {
+      req.usuario = verificarToken; // util para llamadas posteriores
+      return next();
+    }
+  } catch(err) { // si no se pudo verificar, error
+    res.json({ error: "Error al validar usuario"});
+  }
+}
+// agregamos middleware autenticar usuario
+app.get("/seguro", autenticarUsuario, (req,res) => {
+  res.send(`Esta es una pagina autenticada. Hola ${req.usuario.usuario}!`)
+})
+```

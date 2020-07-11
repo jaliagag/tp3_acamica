@@ -63,3 +63,17 @@ Administrador de paquetes o módulos de nodeJS. <https://www.npmjs.com>. `npm in
 
 source <https://www.youtube.com/watch?v=8eg4w8v076w>
 
+<https://www.youtube.com/watch?v=794Q71KVw1k>
+
+```js
+app.get("/", (req, res) => {
+    res.send("Hola mundo");
+    res.json({ // estoy enviando un objeto
+        nombre: "Jose",
+        lastname: "Aliaga"
+    })
+}) //cuando recibas un método get a la ruta inicial de mi applicación, quiero hacer algo
+
+```
+
+Routing:

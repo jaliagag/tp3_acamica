@@ -14,7 +14,9 @@ app.listen(3000, () => { // método que pone nuestro servidor a la escucha - pue
     console.log("Servidor iniciado!");
 }) */
 
-const express = require("express");
+/////////////////////////////////////////////////////////////////////////////////
+
+/* const express = require("express");
 const app = express();
 
 function logRequest (req, res, next) {
@@ -42,5 +44,32 @@ app.get("/gandalf", interceptar, (req, res) => {
 
 app.listen(3000, () => {
     console.log("servidor iniciado");
+}) */
+
+/////////////////////////////////////////////////////////////////////////////////
+
+const express = require("express");
+const bodyParser = require("body-parser")
+const app = express();
+
+app.use(bodyParser.json());
+
+app.get("/", (req, res) => {
+  res.send("Menu");
+});
+
+let platos = [];
+
+app.get("/platos", (req, res) => {
+  res.json(platos);
 })
 
+app.post("/platos", (req, res) => {
+  platos.push(req.body);
+  console.log("Plato agregado al array");
+  res.json(req.body);
+});
+
+app.listen(3000, () => {
+  console.log("Servidor iniciado");
+});
