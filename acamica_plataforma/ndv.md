@@ -609,8 +609,36 @@ SQL: es un lenguaje estándar creado para guardar, manipular y consultar bases d
   + INSERT: con este comando vamos a poder insertar nuevos registros en una tabla. Se puede utilizar de dos formas distintas. Si vamos a indicar todos los campos del registro entonces podemos hacer lo siguiente:
   `INSERT INTO nombre_tabla VALUES (valor_columna_1, valor_columna_2, valor_columna_n)`
   Es importante respetar el orden de los valores ya que deben coincidir con los de la tabla. Si solo vamos a ingresar algunas columnas requeridas o para que se completen con su valor por defecto al crear la tabla, podemos definir qué columnas queremos insertar agregando:
-  
-  + UPDATE
-  + DELETE
+  `INSERT INTO nombre_tabla (nombre_columna_1, nombre_columna_3) VALUES (valor_columna_1, valor_columna_3`
+  En este caso podemos poner cualquier nombre de columna en cualquier orden, pero los valores a insertar deben estar ordenados de la misma manera. `INSERT INTO alumnos (email, nombre, edad) VALUES ('matias.bontempo@gmail.com', 'Matías', '27')`
+  + UPDATE: para actualizar uno o varios registros. Al igual que el SELECT, podemos usar la cláusula WHERE para indicar qué registros se deben actualizar. si no estuviera definida se van a actualizar todos los registros. Utilizamos el SET para definir los campos que queremos actualizar separados por coma. 
+    * eliminar el mail y la edad de todos los alumnos: 
+      ```sql
+      UPDATE alumnos
+      SET email = NULL, edad = NULL
+      ```
+    * Actualizar la edad del alumno con id 1:
+      ```sql
+      UPDATE alumnos
+      SET edad = 28
+      WHERE id = 1
+      ```
+    * Setear como inactivos todos los usuarios sin una dirección de email definida:
+      ```sql
+      UPDATE usuarios
+      SET activo = false
+      WHERE email = NULL
+      ```
+  + DELETE: Este comando nos permite eliminar registros de una tabla. Al igual que el SELECT y el UPDATE, también usa la cláusula WHERE para especificar qué registros eliminar. Es MUY importante tener cuidado al ejecutarlo, ya que si no indicamos una condición con el WHERE y no hay backups puede que perdamos todo:
+  `DELETE FROM nombre_tabla`
+  Eliminar todos los usuarios inactivos:
+  ```sql
+  DELETE FROM usuarios
+  WHERE activo = false
+  ```
+  Adiós a todos nuestros usuarios
+  ```sql
+  DELETE FROM usuarios
+  ```
 
-
+Conexión a Node: no se conecta el frot end directamente a la DB. Creemos 
