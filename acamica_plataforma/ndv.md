@@ -516,3 +516,101 @@ app.get("/seguro", autenticarUsuario, (req,res) => {
   res.send(`Esta es una pagina autenticada. Hola ${req.usuario.usuario}!`)
 })
 ```
+
+## Base de datos
+
+Persistencia de datos: guardar y leer datos. Tenemos dos motores de bases de datos: relacionales o SQL, o no renacionales No-SQL.
+
+- Relacionales: guardan información en formato de tablas - vamos a tener una tabla por cada una de las entidades o elementos de nuestro universo y esas tablas van a tener las propiedades que describen a esa entidad. Los motores relaciones más comunes son **MySQL**, Postgress y Microsoft SQL server.
+- No-relacionales: guardan la información en formato de colecciones o documentos JSON. Vamos a tener un objeto JSON por cada una de las entidades que van a tener una estructura dinámica. Motores NoSQL más populares: mongoDB, firebaseDB y redis.
+
+Entidad: objeto que necesitamos modelar del cual necesitamos sus atributos. Vamos a tener una tabla de películas, genéros, años, directores... 
+
+Las **columnas** contienen las propiedades de la entidad que estamos describiendo. Las **filas** tienen el contenido de cada uno de los registros.
+
+**Clave primaria**: la clave primaria es una columna especial que nos permite identificar a cada uno de los registros de forma única. Hay tablas que tienen claves primarias naturales, como tablas de personas que se identifican por su DNI y garantiza que ese número es único para ese registro específico. Esto no funcionaría si incluimos gente de otros países, pues no tenemos garantía de que no se vayan a repetir los registros. Se suele agregar una columna adicional llamada **ID** y se le indica al motor de base de datos que tiene que ir autoincrementando ese valor de forma consecutiva cada vez que se agrega un registro.
+
+Cuando definimos una clave primaria esta se convierte en un índice - le permite al motor de DB que cuando intentemos hacer una consulta por ID tener una forma más rápida de acceder y encontrar los registros. Podríamos definir cualquier columna como índice, pero puede hacer que esto sea má lento.
+
+**phpMyAdmin**: plataforma open source escrita en PHP que nos permite gestionar las bases de datos, tablas, relaciones, usuarios entre otros, con una interfaz visual y desde el navegador.
+
+SQL: es un lenguaje estándar creado para guardar, manipular y consultar bases de datos relacionales. Estos son los 7 comandos más utilizados:
+
+- pertenecen al lenguaje de definición de datos
+  + CREATE: nos permite crear nuevas tablas
+
+    ```sql
+    CREATE TABLE nombre_de_la_tabla (
+      nombre_columna_1 TIPO_DE_DATO [PROPIEDADES OPCIONALES],
+      nombre_columna_2 TIPO_DE_DATO,
+      nombre_columna_3 TIPO_DE_DATO
+      PRIMARY KEY (nombre_columna)
+      )
+    ```
+
+    Los tipos de dato más comunes son:
+
+    ```sql
+    INT: valores enteros hasta 4294967295
+    DOUBLE: números con coma
+    VARCHAR(n): textos de longitud corta. Se indica entre paréntesis la cantidad de caracteres
+    TEXT: textos de longitud larga
+    DATE: fechas en formato YYYY-MM-DD
+    ```
+
+    Propiedades opcionales
+
+    ```sql
+    PRIMARY KEY: nos permite indicar que la columna es la clave primaria de la tabla
+    AUTO_INCREMENT: definimos que esta columna debe incrementarse automáticamente con cada nuevo registro
+    UNIQUE: si la columna es única no pueden existir dos valores repetidos en distintos registros
+    UNSIGNED: indica que el contenido de la columna no puede tomar valores negativos
+    NOT NULL: Define que esta columna no puede quedar vacía y siempre tiene que recibir un valor
+    ```
+
+  + ALTER: modificar la estructura de una tabla
+    * Agregar una columna: 
+    ```sql
+    ALTER TABLE nombre_tabla
+    ADD nombre_columna TIPO_DE_DATO
+    ```
+    * Eliminar una columna:
+    ```sql
+    ALTER TABLE nombre_tabla
+    DROP nombre_columna
+    ```
+    * Modificar una columna:
+    ```sql
+    ALTER TABLE nombre_tabla
+    MODIFY COLUMN nombre_columna NUEVO_TIPO_DE_DATO;
+    ```
+  + DROP: para eliminar una tabla `DROP nombre_tabla`
+- pertenecen al lenguaje de manipulación de datos
+  + SELECT: consultar y traer información de nuestras tablas. Su forma más básica nos permite traer todos los registros de una tabla específica junto con todas las columnas de cada uno: `SELECT * FROM nombre_tabla`. Podemos reemplazar el `*` por el nombre de las columnas que necesitamos para tener una respuesta más chica (`SELECT email, nombre FROM usuarios`)
+  + WHERE: filtrar los registros según el contenido. Podemos usar varios operadores básicos como el `=`, `!=`, `<`, `>`, `<=` o `>=`. Otro operador es el LIKE que devuelve verdadero si el campo que estamos evaluando contiene un _string_. Por último podemos encadenar filtros con operaciones lógicas como AND y OR.
+    * Obtener el usuario con id 5: `SELECT * FROM usuarios WHERE id = 5`
+    * usuarios con gmail: `SELECT * FROM usuarios WHERE email LIKE '%@gmail.com'`
+    * mayores de edad llamados matías: `SELECT * FROM usuarios WHERE edad >= 18 AND nombre = 'Matías'`
+  + JOIN: tablas linkeadas. Supongamos dos tablas, una de alumnos y otra de casas de Hogwarts. Los alumnos están asignados a una única casa, por eso su tabla contiene una columna lamada casa_id que contiene el id de la casa a la que está asignado.
+  Para obtener un listado de todos los alumnos y la casa a la que están asignados:
+    ```sql
+    SELECT * FROM alumnos
+    JOIN casas_hogwarts
+      ON alumnos.casa_id = casas_hogwarts.id
+    ```
+  Si quisiéramos una lista de los nombres de los alumnos que pertenecen a Ravenclaw podemos realizar la siguiente consulta:
+
+    ```sql
+    SELECT alumnos.nombre, casas_hogwarts.nombre FROM alumnos
+    JOIN casas_hogwarts
+      ON alumnos.casa_id = casas_hogwarts.id
+    WHERE casas_hogwarts.nombre = 'Ravenclaw'
+    ```
+  + INSERT: con este comando vamos a poder insertar nuevos registros en una tabla. Se puede utilizar de dos formas distintas. Si vamos a indicar todos los campos del registro entonces podemos hacer lo siguiente:
+  `INSERT INTO nombre_tabla VALUES (valor_columna_1, valor_columna_2, valor_columna_n)`
+  Es importante respetar el orden de los valores ya que deben coincidir con los de la tabla. Si solo vamos a ingresar algunas columnas requeridas o para que se completen con su valor por defecto al crear la tabla, podemos definir qué columnas queremos insertar agregando:
+  
+  + UPDATE
+  + DELETE
+
+
