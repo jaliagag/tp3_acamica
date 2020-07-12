@@ -827,3 +827,5 @@ Further courses:
 - <https://www.acamica.com/cursos/128/introduccion-a-docker>
 - <https://www.acamica.com/cursos/123/dominando-sass>
 - <https://www.acamica.com/cursos/74/asincronismo-en-javascript>
+- <https://www.acamica.com/cursos/26/fundamentos-de-la-programacion>
+- <https://www.acamica.com/cursos/34/programacion-iii-funcional>
