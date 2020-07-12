@@ -809,3 +809,21 @@ Cerveza Tirada, 90, 90, false
 Podemos identificar cada fila separada por un salto de línea \n como un registro y cada columna o propiedad está separada por ,. Podemos hacer split sobre ese gran string y obtener un array fácilmente procesable.
 
 El desafío de esta actividad es crear un algoritmo que procese un CSV con un listado de 1000 personas y las ingrese en la DB. Una vez creado el algoritmo base, un desafío adicional puede ser calcular la edad de la persona en base a su fecha de nacimiento y guardarla en una nueva columna. Puntos extra si agregamos validaciones a nuestro algoritmo de forma tal que no permita insertar personas sin apellido o que la fecha de nacimiento sea previa al 1800.
+
+Comandos de Heroku:
+
+```md
+heroku login
+heroku create
+git push heroku master
+```
+
+Further courses:
+
+- <https://www.acamica.com/cursos/41/nodejs>
+- <https://www.acamica.com/cursos/119/introduccion-a-react>
+- <https://www.acamica.com/cursos/105/la-api-mercadolibre-conceptos-finales>
+- <https://www.acamica.com/cursos/42/express>
+- <https://www.acamica.com/cursos/128/introduccion-a-docker>
+- <https://www.acamica.com/cursos/123/dominando-sass>
+- <https://www.acamica.com/cursos/74/asincronismo-en-javascript>
