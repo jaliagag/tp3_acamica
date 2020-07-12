@@ -641,4 +641,171 @@ SQL: es un lenguaje estándar creado para guardar, manipular y consultar bases d
   DELETE FROM usuarios
   ```
 
-Conexión a Node: no se conecta el frot end directamente a la DB. Creemos 
+Conexión a Node: no se conecta el frot end directamente a la DB. Creamos un servicio intermedio, una API que se encarga de hacer consultas específicas con filtros específicos, y devolver esa información finalmente a la aplicación.
+
+Para esto vamos a usar `sequalize` que es un paquete de npm que nos permite hablar con distintas bases de datos relacionales. Tenemos que usar un driver específico que es un driver que se llama `mysql2`
+
+```js
+// package-json
+{
+  "name": "acamica-db",
+  "dependencies": {
+    "sequelize": "^5.9.2",
+    "mysql2": "^1.6.5"
+  }
+  
+}
+
+// index.js
+const Sequelize = require ('sequelize ');
+
+    // generamos la conexión - instanciamos sequelize; se le pasa el string con la info de la conexión
+    // usuario:contraseña@dirección de la base de datos/base de datos a la que nos queremos conectar
+const sequelize = new Sequelize('mysql://root:password@localhost:3306/database');
+
+// autenticarnos
+sequelize.authenticate().then(async () => {
+  const query = 'SELECT * FROM usuarios';
+  // query tiene dos parámetros: la consulta y varios atributos que queremos definir. método query es una promesa. 
+  // ponemos resultados entre corchetes para tomar el primero de los dos resultados que nos trae esta query
+  const [resultados] = await sequelize.query(query, {raw: true})
+})
+```
+
+El método `query` de sequelize siempre devuelve una promesa que debee ser procesada correctamente. En este ejemplo lo resolvemos con `await` y suponemos que se están ejecutando dentro de una función asíncrona.
+
+La tabla:
+
+```sql
+CREATE TABLE usuarios (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    email VARCHAR (60) UNIQUE NOT NULL,
+    nombre VARCHAR (60) NOT NULL,
+    edad INT UNSIGNED NOT NULL
+)
+```
+
+Crear la tabla desde el panel de phpMyAdmin o con el siguiente comando una vez realizada la conexión en node:
+
+```js
+await sequelize.query('
+    CREATE TABLE usuarios (
+        id INT PRIMARY KEY AUTO_INCREMENT,
+        email VARCHAR (60) UNIQUE NOT NULL,
+        nombre VARCHAR (60) NOT NULL,
+        edad INT UNSIGNED NOT NULL,
+    )',
+    { raw: true },
+);
+console.log('Tabla creada.');
+```
+
+Ingresar datos en la tabla con INSERT.Para crear los datos podemos escribir nombres y direcciones de email o podemos usar `faker`.
+
+```js
+await sequelize.query(`
+    INSERT INTO usuarios (email, nombre, edad)
+    VALUES (
+        ${faker.name.findName()},
+        ${faker.internet.email(),
+        ${Math.floor((Math.random() * 100))}
+    )`,
+    { raw: true },
+);
+console.log('Registro insertado.');
+```
+
+La respuesta de `query` en un SELECT es un array con dos elementos y en el caso de usar mysql como driver, ambos elementos tienen el mismo contenido: la respuesta de la consulta. Por eslo el elemento **0** del resultado contiene todos nuestros usuarios.
+
+```js
+const resultado = await sequelize.query(
+    `SELECT * FROM usuarios`,
+    { raw: true },
+);
+console.log(resultado[0]);
+```
+
+Traer solo el listado de usuarios deconstruyendo el array al asignarlo a una variable:
+
+```js
+const [usuarios] = await sequelize.query(
+    `SELECT * FROM usuarios`,
+    { raw: true },
+);
+console.log(usuarios);
+```
+
+Buscar usuarios menores de edad:
+
+```js
+const [usuarios] = await sequelize.query(
+    `SELECT * FROM usuarios
+    WHERE edad < 18`,
+    { raw: true },
+);
+console.log(usuarios);
+```
+
+Y cuyo nombre arranque con la letra M:
+
+```js
+const [usuarios] = await sequelize.query(
+    `SELECT * FROM usuarios
+    WHERE edad >= 18 AND name LIKE 'M%'`,
+    { raw: true },
+);
+console.log(usuarios);
+```
+
+Para hacer un UPDATE es importante tener definido el WHERE si no queremos actualizar los registros de la tabla con un mismo valor:
+
+```js
+await sequelize.query(
+    `UPDATE usuarios SET (email) VALUES ('nuevo@email.com')
+    WHERE id = 5`,
+);
+console.log('Registro actualizado.');
+```
+
+De no tener el WHERE, estaríamos actualizando el mail de TODOS los usuarios.
+
+El uso del DELETE es similar. No olvidar el uso del WHERE:
+
+```js
+await sequelize.query(
+    `DELETE FROM usuarios
+    WHERE edad = 0`,
+    { raw: true },
+);
+console.log('Registros eliminados.')
+```
+
+### Relaciones
+
+Existen 3 tipos de relaciones:
+
+1. relaciones 1 a 1: un elemento de una tabla solamente se relaciona con otro elemento de otra tabla. Como que se extienden los elementos de las tablas. Es poco común.
+2. relaciones 1 a muchos y muchos a 1: un elemento de una tabla se puede relacionar con más de un elemento de otra tabla. Dependiendo de la orientación, se suele agregar una columna adicional a alguna de las dos tablas.
+3. relaciones muchos a muchos: no se le agrega una columna adicional a las tablas; se crea una tabla nueva que tiene la relación propiamente dicha. ID de la relación, ID del elemento en la tabla 1 y id del elemento con el que se relaciona en la tabla 2.
+
+Diagrama entidad-relación: la relación entre los elementos
+
+Procesar un CSV:
+
+Supongamos que ya terminamos de desarrollar e implementar un sistema que debe almacenar grandes cantidades de productos. Sin embargo, hay algo importante que nos está faltando: data. Probablemente creamos un par de registros de prueba para poder testear las consultas a la DB, pero si queremos pasar a producción vamos a necesitar llenar las tablas con datos reales. Existen varias posibilidades: una de ellas (y la más aburrida) es sentarnos varias horas delante de una consola SQL para ingresar y validar cada uno de los registros. Otra opción es crear un panel de administración al que pueda acceder el cliente para cargar los productos uno a uno.
+
+Pero existe una forma mucho más eficiente y poderosa para hacer esto: es muy común que para casos de grandes cantidades de elementos el cliente posea algún tipo de archivo con todos los datos necesarios. Teniendo esto en cuenta, podemos crear un panel de administración que posea un input para subir un archivo con esta información y nosotros procesarlo y hacer los INSERTs en la base de datos de forma automática.
+
+Un estándar bastante común es el formato CSV (Coma Separated Values) o su primo el TSV (Tab Separated Values). Estos archivos nos ofrecen una matriz de dos dimensiones que podría verse de la siguiente forma:
+
+```md
+nombre, precio, precio_descuento, disponible
+Hamburguesa Doble Quotes, 250, 199, true
+Hamburguesa Singleton, 190, 180, true
+Papas Fritas, 150, 150, true
+Cerveza Tirada, 90, 90, false
+```
+
+Podemos identificar cada fila separada por un salto de línea \n como un registro y cada columna o propiedad está separada por ,. Podemos hacer split sobre ese gran string y obtener un array fácilmente procesable.
+
+El desafío de esta actividad es crear un algoritmo que procese un CSV con un listado de 1000 personas y las ingrese en la DB. Una vez creado el algoritmo base, un desafío adicional puede ser calcular la edad de la persona en base a su fecha de nacimiento y guardarla en una nueva columna. Puntos extra si agregamos validaciones a nuestro algoritmo de forma tal que no permita insertar personas sin apellido o que la fecha de nacimiento sea previa al 1800.
