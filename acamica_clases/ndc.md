@@ -175,13 +175,13 @@ exports.divi = function(valor1, valor){
 
 PPT 42
 
-NPM - página de librerías. Node package manager. NPM es un gestor d epaquetes o librerías. Viene instalado junto con Node y se utiliza en la consola. `npm -i {nombre del paquete} -g`.
+NPM - página de librerías. Node package manager. NPM es un gestor d epaquetes o librerías. Viene instalado junto con Node y se utiliza en la consola. `npm -i {nombre del paquete} -g`. `-g` lo instala de manera global
 
 Nodemon: detecta automáticamente cambios en un script.
 
-npm uninstall paquete
+`npm uninstall paquete`
 
-Hacer que un paquete sea solamente para el ambiente de desarrollo: npm install paquete --save-dev
+Hacer que un paquete sea solamente para el ambiente de desarrollo: `npm install paquete --save-dev`
 
 Desde package.json, podemos ejecutar comandos puestos en la sección script (no lo veo muy útil):
 
@@ -205,7 +205,86 @@ npm run mensaje
 
 PPT 43
 
+`require`: nos permite importar un módulo o librería. Módulo propio: `module.exports`
 
+```js
+const usma = (a,b){
+    return a + b;
+}
 
+module.exports = {suma}
 
+// en server.js
 
+const suma = require('suma');
+```
+
+package.json es un archivo que contiene información de nuestro proyecto. La sección que realmente nos intersa es `dependencias`, que es donde se guardan todas la librerías que nuestro proyecto necesita para funcionar.
+
+package-lock.json: las dependencias descargadas. Lo que se instaló --> agregar al gitignore.
+
+ExpressJS: framework que nos permite construir un servidor web en nodeJS de una forma muy fácil y sencilla.
+
+Framework no es lo mismo que librería; los frameworks te encapsulan a trabajar según un estándar de programación.
+
+```js
+// parado en la carpeta
+npm init
+npm i express
+
+// en el archivo server.js o app.js
+
+const express = require('express');
+const server = express();
+
+server.listen(3000, ()=> {
+    console.log('Servidor iniciado');
+})
+```
+
+PM2 --> modulo de nodejs.
+
+app.use --> estamos haciendo uso de los middlewares
+
+## clase 42
+
+PPT 44
+
+Un middleare es una forma de agregar código entre nuestra ruta y el servidor de express; de esta forma podemos encadenar la ejecución de diferentes funciones previo a la ejecución de nuestras rutas. Una de las utilidades más comunes es la de **validar si un usuario está autenticado o si tiene acceso a determinado conjunto de recursos**.
+
+Para agregar un middleware utilizamos la función `use`, que recibe un callback con 3 parámetros: 
+
+- req: el request original
+- res: el response original
+- next: función para ejecutar el resto de los middlewares
+
+```js
+// agregar un middleware
+function agregarLog(req, res, next){
+    console.log('Ruta accedida: ' + req.path);
+    next();
+}
+```
+
+Para cortar la ejecución:
+
+```js
+function agregarLog(req, res, next){
+    if(req.query.usuario !== 'usuario'){
+        res.json('usuario inválido');
+    } else {
+        next();
+    }
+}
+
+server.use(validarUsuario);
+```
+
+Middlewares de parseo de body: una de las funcionalidades más utilizadas dentro del mundo de backend es utilizar rutas del tipo POST que reciben en el body un JSON. Por ejemplo, podemos tener una ruta /contacto que recibe un body como el siguiente: 
+
+```js
+{
+    "nombre": "pedro",
+    "email", "asdf@dominio.com"
+}
+```
