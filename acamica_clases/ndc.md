@@ -288,3 +288,45 @@ Middlewares de parseo de body: una de las funcionalidades más utilizadas dentro
     "email", "asdf@dominio.com"
 }
 ```
+
+¡¡¡_ES IMPORTANTE EL ORDEN DE LOS MIDDLEWARES; PARA QUE SE EJECUTEN HAY QUE PONERLOS ANTES DE LOS ENDPOINTS_!!!
+
+Middleware global: no tiene ruta asignada, se ejecuta antes que el endpoint.
+
+```js
+// middleware SIN ruta
+server.use(req, res, next){
+    console.log('no tengo ruta, soy global');
+    next();
+}
+
+server.use('/home', (req, res, next){
+    console.log('primero paso el middleware');
+    next();
+});
+
+server.get('/home', (req, res) => {
+    console.log('estoy en home');
+})
+```
+
+- Endpoints en un archivo separado
+
+```js
+// supuestamente en un archivo aparte
+
+const endpoint = {
+    bienvenida:'/bienvenida/:saludo', // <-- parámetros
+    hola:'/hola',
+    salida:'/salida'
+}
+
+server.get(endpoint.bienvenida,(req,res)=>{
+    let saludo = req.params.saludo;
+    console.log("Hola soy un " + saludo);
+})
+```
+
+- req.body: formulario
+- req.query: 
+- req.param: 
