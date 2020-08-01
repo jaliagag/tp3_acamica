@@ -330,3 +330,15 @@ server.get(endpoint.bienvenida,(req,res)=>{
 - req.body: formulario
 - req.query: 
 - req.param: 
+
+## Clase 43
+
+## Clase 44
+
+- Model View Controller
+- cors: peticiones de origen cruzado, para que te puedan llamar la api desde cualquier dominio
+
+Si voy a interactuar entre el body y el servidor, necesito tener middlewares.
+
+## Clase 45
+
