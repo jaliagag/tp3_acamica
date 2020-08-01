@@ -342,3 +342,37 @@ Si voy a interactuar entre el body y el servidor, necesito tener middlewares.
 
 ## Clase 45
 
+## Clase 46
+
+Vistas: se usan para generar los mismos datos repetitivamente. Hacer una consulta repetitiva que trae muchos datos. Se setea la consulta; 
+
+Almacenamientos = datos.
+
+Clave primaria: no se debería repetir.
+
+Normalización de la base de datos - identificar la cantidad de veces que se repite un dato y tratar de evitar que se repitan.
+
+Tabla de pedidos, tabla de ingredientes.
+
+Para crear una tabla por consola, se recomienda crearla por consola; primero se le pone el nombre de la columna, el tipo de dato...
+
+```sql
+CREATE TABLE persona (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    apellido VARCHAR (60),
+    nombre VARCHAR (60) NOT NULL,
+    dni INT UNSIGNED NOT NULL
+)
+```
+
+- SELECT --> traeme
+- WHERE --> donde
+- %x% --> todo lo que contenta antes o después x
+- para las fechas, siempre usamos BETWEEN y ponemos dos fechas
+- INSERT --> insertar en nuestra base de datos
+
+
+
+
+
+
