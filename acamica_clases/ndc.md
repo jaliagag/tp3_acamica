@@ -371,7 +371,9 @@ CREATE TABLE persona (
 - para las fechas, siempre usamos BETWEEN y ponemos dos fechas
 - INSERT --> insertar en nuestra base de datos
 
+## Clase 47
 
+26:10
 
 
 
