@@ -373,8 +373,62 @@ CREATE TABLE persona (
 
 ## Clase 47
 
-26:10
+- Autenticación: identificar al usuario para poder darle los permisos que requiera; validar que usuario y contraseña sean correctos; usamos **JWT**.
+- Autorización: permiso para acceder al recurso que queremos acceder. Autorización para ver recursos.
 
+JSON web token. Un tocken es un algoritmo cifrado; es un objeto con propiedades. Mientras los dos sean iguales, vamos a poder continuar.
+
+`npm install jwt`
+
+JWT se verifica en el backend.
+
+```js
+const jwt = require('jsonwebtoken');
+const informacion = {nombre: 'Joe'};
+const firma = 'Mi_password_secreto'
+const token = jwt.sign(informacion, firma); // codificación
+const decodificado = jwt.verify(token, firma);
+console.log(token);
+console.log(decodificado);
+```
+
+Los tokens son unidireccionales.
+
+```js
+app.post('/login', (req, res)=>{
+    const {usuario, clave} = req.body;
+    const validado = validarUsuarioClave(usuario, clave);
+
+    if (!validado) {
+        res.json({error: 'Usuario o contraseña incorrecta'});
+        return;
+    }
+    const token = jwt.sign({
+        usuario
+    }, firmaSeguraJWT);
+
+    res.json({token});
+})
+```
+
+```js
+app.post('/seguro', autenticarUsuario, (req, res)=>{
+    res.send(`Esta es una página autenticada. Hola ${req.usuario.usuario}`);
+});
+
+const autenticarUsuario = (req, res, next) => {
+    try {
+        const token = req.headers.authorization.split(' ')[1];
+            const verificarToken = jwt.verify(token, jwtSign);
+            if (verificartoken) {
+                req.usuario = verificarToken;
+                return next();
+            }
+    } catach(err) {
+        res.json({error: 'Error al validar usuario'});
+    }
+}
+```
 
 
 
