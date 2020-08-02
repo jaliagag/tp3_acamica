@@ -430,5 +430,59 @@ const autenticarUsuario = (req, res, next) => {
 }
 ```
 
+```js
+// CHECK RESULTADO FINAL
 
+const express = require('express');
+const server = express();
+server.use(express.json());
+server.use(express.urlencoded({extended:true})) // body-parse
+
+const jwt = require('jsonwebtoken');
+/* const informacion = {nombre: 'rordirgo'};
+const firma = 'Mi_pwd_secreto';
+const token = jwt.sign(informacion,firma); */
+
+function validarUsuarioclave(usuario, clave){
+    console.log(usuario);
+    if (usuario == 'rodrigo' && clave =='1234'){
+        return true;
+    } else{
+        return false;
+    }
+}
+
+let usuarios = [{
+    username: "rodirgo",
+    password: "1234",
+    mail: "rodrigo@test",
+    loged: false
+},{
+    username: "test",
+    password: "test",
+    mail: "test@test.com",
+    loged: false
+}]
+
+server.get('/login/:usuario/:clave', (req, res)=> {
+    const {usuario, clave} = req.body;
+    const validado = validarUsuarioClave(usuario,clave);
+
+    if (!validado){
+        res.json({erro: "usuario o clave incorrecta"});
+        //return;
+    } else {
+        res.json({error: "usuario o clave incorrecta"})
+    }
+/*     const token = jwt.sign({
+        usuario
+    }, firmaSeguraJWT); */
+
+    //res.json({token});
+})
+```
+
+Guardar el item en local storage. Mientras sea válido, todo bien; cuando no existe o no es válido, vas al login.
+
+## Clase 48
 
