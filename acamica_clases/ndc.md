@@ -486,3 +486,162 @@ Guardar el item en local storage. Mientras sea válido, todo bien; cuando no exi
 
 ## Clase 48
 
+Conexión desde NODE - necesitamos tener sequelize y mysql2
+
+```js
+// npm i sequelize
+// npm i mysql2
+
+const express = require('express');
+const server = express();
+
+const Sequelize = require('sequelize');
+const sequelize = new Sequelize('mysql://root: @127.0.0.1:3306/<db_name>')
+
+// new Sequelize('mysql://user:password@host:port/dbname)
+
+// sentencia 
+
+sequelize.query('SELECT * FROM razas',
+    {type: sequelize.QueryTypes.SELECT}
+).then((resultados)=>{
+    console.log(resultados)
+})
+
+server.listen(3000, ()=> {
+    console.log('servidor iniciado');
+})
+```
+
+```js
+const express = require('express');
+const server = express();
+const Sequelize = require('sequelize');
+const conectarse = new Sequelize('mysql://rodrigo:1234@127.0.0.1:3306/acamica');
+//console.log(conectarse);
+/*conectarse.query('SELECT * FROM `usuarios`',{ type: conectarse.QueryTypes.SELECT })
+.then(function(resultados){
+    console.log(resultados);
+});*/
+conectarse.query('SELECT * FROM `usuarios` WHERE estado = ?',
+{ replacements: ['activo'], type: conectarse.QueryTypes.SELECT })
+.then(function(resultados){
+    console.log(resultados);
+});
+/*conectarse.query('SELECT * FROM `usuarios` WHERE estado = :estado',
+{ replacements: {estado:'activo'} , type: conectarse.QueryTypes.SELECT })
+.then(function(resultados){
+    console.log(resultados);
+});*/
+/*
+conectarse.query('UPDATE `usuarios` SET `nombres`="juan" WHERE id = ?',
+{ replacements: ['1']})
+.then(function(resultados){
+    console.log(resultados);
+});*/
+/*
+conectarse.query('delete from `usuarios` WHERE id = ?',
+{ replacements: ['1']})
+.then(function(resultados){
+    console.log(resultados);
+});*/
+/*conectarse.query('INSERT INTO `usuarios`( `nombres`, `apellidos`, `fecha_nac`, `estado`) VALUES (?,?,?,?])',
+{ replacements: ['arnold','schwarzenegger','1969-05-11','activo']})
+.then(function(resultados){
+    console.log(resultados);
+});*/
+server.listen(3000, ()=>{ 
+    console.log('Server iniciado');
+});
+```
+
+## Clase 49
+
+```js
+const express = require('express');
+const app = express();
+const JWT = require('jsonwebtoken');
+// Secret
+const SECRET = 'alkjfakjdf23j1k31ñk'
+
+// JWT JSON + TOKEN {}
+// /login (email and pass) MATCH -> token -> client
+// /verify req (token and correct) -> {mensaje valido o invalido}
+// need
+// jsonwebtoken
+// secret -> acamica -> hash (secreto)
+// payload -> Obj -> {propiedades} -> propiedades propias de jwt | sub:(alias/email)
+//                                                               iat: (fecha de inicio)
+//                                                              exp: (fecha de expiración )
+//                                                              role: ['admin', read, ]
+// payload = {sub:alias, iat:date, exp:date, role[]} <- validar si el token tiene una duración de XXX minutos
+
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
+
+app.get('/login', ()=>{
+    let email = req.body.email;
+    let password = req.body.password; // buscar email y password
+    let payload = { // ejemplo para un programador o para mí mismo de la información que voy a incluir acá
+        sub: null,
+        name: '',
+        role:[]
+    }
+    let r = {
+        invalido: {
+            err: true,
+            msg: 'password invalido'
+        }
+    }
+    let token
+    let dataPayload
+
+    if(email == 'asdf@asdf.com')
+        if(password == '1234'){
+            dataPayload = Object.assign({}, payload, { // object assign clona el objeto O le agrega un elemento al objeto | en este caso le clona el objeto 
+                sub: 'asdf@asdf.com',
+                name: 'joe',
+                role: ['admin']
+                });
+            let token = JWT.sign(dataPayload, SECRET) // JWT una la data y el secreto y genera un hash, que es una cosa extremadamente larga
+            // JWT.sign crea el token
+            res.json(token) //"lo envía"
+        }
+
+    res.json(r.invalido)
+})
+
+app.get('/verify', (req, res) => {
+    console.log('token bearer: ', req.headers.authorization)
+    let token = req.headers.authorization.split(' ')[1] // headers.authorization le hace la captura de los token
+    let r = {
+        valido: {
+            err: null,
+            token: null
+        },
+        invalido: {
+            err: true,
+            msg: 'token invalido'
+        }
+    }
+
+    let msgOk
+
+    if(token){
+        JWT.verify(token, SECRET, (err, token)=>{ // JWT.verify verifica el token y necesita el token y el secreto
+            if(!err){
+                msgOk = Object.assign({}, r.valid, {token: token})
+                res.json(msgOk)
+            } else{
+                res.json(r.invalido)
+            }
+        })
+    }
+})
+
+app.listen(5000, ()=>{
+    console.log('servidor iniciado'.toUpperCase())
+})
+```
+
+- https://codahale.com/how-to-safely-store-a-password/
