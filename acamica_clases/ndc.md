@@ -644,4 +644,60 @@ app.listen(5000, ()=>{
 })
 ```
 
-- https://codahale.com/how-to-safely-store-a-password/
+- <https://codahale.com/how-to-safely-store-a-password/>
+
+## Clase 50
+
+Entrevistas: triángulo de pascal.
+
+Relaciones de las bases de datos:
+
+1. uno a uno - no se suele usar
+2. uno a muchos - una persona muchos teléfonos. La más usada. Por cada registro en la tabla principal (tabla de la clave principal) pueden existir muchos registros en la tabla relacionada (tabla de la clave externa)
+3. muchos a muchos - que un registro exista muchas veces en otras tablas
+
+SQL Join nos permite **unir** dos tablas.
+
+| id | apellido | nombre | pasaporte | país |
+| ---- | ----- |---- |----- |----|
+| 1 | Einstein | Albert | 123456 | Alemania |
+| 2 | Turing | Alan Mathison | 23466 | Inglaterra |
+| 3 | Lovelave | ada | 81923 | Inglaterra |
+
+Separamos la tabla en dos. Creamos una tabla nueva:
+
+| cod_pais | pais |
+| --- | ---- |
+| 1 | alemania |
+| 2 | inglaterra |
+| 3 | Zambia |
+| 4 | Argentina |
+
+Y usamos los datos de la tabla nueva para poblar los datos de la tabla principal. Ejecutamos una query para traer todas las personas de nuestra tabla: `SELECT * FROM personas`. Ahora nuestro objetivo es agregar el nombre del país par aque sea legible. Aquí es donde JOIN unirá las dos tablas:
+
+```sql
+SELECT personas.*, paises.pais FROM personas
+    JOIN paises ON personas.cod_pais = pais.cod_pais
+```
+
+1:37:28 - demostración práctica.
+
+ORDER: ordenar de manera ascendente o descen; **ASC**endente o **DESC**endente.
+
+`SELECT * FROM personas ORDER BY nombre ASC`
+
+- <https://studio3t.com/>
+- <https://www.apachefriends.org/es/index.html>
+
+Desde el endpoint hacemos la consulta y hacemos un `fetch`
+
+## Clase 51
+
+Bases de datos No SQL - archivo plano con un conjunto de datos. MongoDB usa colecciones para agrupar información y dentro de ellas almacena documentos.
+
+`npm install mongoose`
+
+```js
+const mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost:27017/mi_base');
+```
