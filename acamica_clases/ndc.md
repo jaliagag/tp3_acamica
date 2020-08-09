@@ -701,3 +701,5 @@ Bases de datos No SQL - archivo plano con un conjunto de datos. MongoDB usa cole
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost:27017/mi_base');
 ```
+
+1:21_50
