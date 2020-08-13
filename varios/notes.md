@@ -77,3 +77,47 @@ app.get("/", (req, res) => {
 ```
 
 Routing:
+
+## Json Web Token en Nodejs con Expressjs
+
+<https://www.youtube.com/watch?v=XK-LhDTT4UQ>
+
+jwt: estándar abierto creado por la RFC. 7519, basado en json para crear un token que sirva para enviar datos entre aplicaciones o servicios y garantizar que estos datos sean válidos y seguros.
+
+Usos:
+
+- Autenticar mis usuarios
+
+<https://tutorialedge.net/nodejs/nodejs-jwt-authentication-tutorial/>
+
+Structure of JWTs:
+
+- **asdfjñlksajdfkajsdñfkjsad**._kdslkjdsañlkdsñlkdslkj_.kjalsdfldsañlkjfasdfj
+  - **JWT header** : contains the metadata about the JWT suchas the type of token and the crypto algorithm used to secure it
+  - _the Payload_: the set of claims contained within a JWT that is represented as a series of key/value pairs
+  - the signature: this is used to validate that the JWT has not been tampered with and is generated using the header + payload + sign key or passphrase
+
+## Express Middlewares
+
+<https://www.youtube.com/watch?v=VOx3iON96ew>
+
+Todos los middlewares de express son funciones. Cada petición del cliente pasa por aquí.
+
+- módulo morgan: nos muestra por consola lo que piden las aplicaciones cliente.
+
+<https://www.youtube.com/watch?v=MIr1oxQ3pao>
+
+How express handles a sequence of functions. How express deals with sequences of requests, of _urls_.
+
+Make a request go through a middleware every time:
+
+```js
+// le middleware
+const sup = (req, res, next) => {
+    console.log('sup');
+    next()
+}
+
+app.use(sup);
+```
+
