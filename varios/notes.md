@@ -195,3 +195,122 @@ app.listen(3000, (req, res) => {
     console.log('Servidor iniciado');
 })
 ```
+
+## Understanding HTTP Request Verbs
+
+<https://www.youtube.com/watch?v=Pm28JXFAu4Y>
+
+- GET: read; read some data back; I only send a request to read.
+
+```js
+app.get('/api/channel', (req, res) => {
+    // return the list of channels
+    // respond with a 200
+    res.json(data);
+    console.log('GET', data.channels);
+});
+
+app.get('/api/channel/:id', (req, res) => {
+    // return the list of channels
+    // respond with a 200
+    let obj = data.channels.find(item => item.id = parseInt(req.params.id));
+    res.json(obj);
+    console.log('GET', obj);
+});
+```
+
+- POST: For CREATING. Sending a request AND something else from the client, some _DATA_. I'm creating something new. for instance, `req.body`
+
+```js
+let url = "http://localhost:3000/api/channel";
+
+let h = new Headers();
+h.append("Content-Type", "application/json");
+
+let data = JSON.stringify({ name: 'Jose Aliaga' });
+
+let req = new Request(url, {
+    method: 'POST'
+    ,headers: h,
+    ,body: data
+});
+
+fetch(req)
+    .then(res => res.json())
+    .then(data => {
+        console.log(data);
+        document.getElementById('output').textContent = JSON.stringify()
+    })
+
+```
+
+```js
+app.post('/api/channel', (req, res) => {
+    // add new channel then return new list
+    // respond with a 201
+    let { name } = req.body;
+    console.log(req.body);
+    let id =
+        data.channels.reduce((prev, curr) => {
+            retur prev < curr.id ? curr.id : prev;
+        }, 0) + 1;
+    let last_update = Date.now();
+    let obj = { id, name, last_update};
+    data.channels. push(obj);
+    res.status(201),json(obj);
+    console.log('POST', data.channels)
+});
+```
+
+- PUT and PATCH: both have to do with updating. With PUT we can do and INSERT; if the record doesn't exist, we can create it. We _CANNOT_ do this with PATCH; PATCH is only for updating.
+
+```js
+app.put('/api/channel/:id', (req, res) => {
+    // replace a channel based on id
+    // respond with 200 or 204
+    // 202 if the operation is async and still pending
+    // Basically an UPDATE but we could also do an INSERT if the id is available
+    // or we could choose to create a new id and do an INSERT if the id does not exist
+    let id = parseInt(req.params.id);
+    let name = req.body.name;
+    let last_update = Date.now();
+    let idx = data.channels.findIndex(item => item.id === id);
+    data.channels[idx].name = name;
+    data.channels[idx].last_update = last_update;
+    res.status(200).json(data.channels[idx]);
+    console.log('PUT', data.channels);
+});
+
+app.patch('/api/channel/:id', (req, res) => {
+    // edit a channel
+    // respond with 200 or 204
+    // 202 if the operation is asynv and still pending
+    let id = req.params.id;
+    let name = req.body.name;
+    let last_update = Date.now();
+    let idx = data.channels.findIndex(item => item.id === id);
+    data.channels[idx].name = name;
+    data.channels[idx].last_update = last_update;
+    res.status(200).json(obj);
+    console.log('PATCH', data.channels);
+})
+```
+
+- DELETE: deleting a channel
+
+```js
+app.delete('/api/channel/:id'. (req, res){
+    // delete a channel
+    // respond with 200 or 204
+    // 202 if the operation is async and still pending
+    let id = req.params.id;
+    data.channels = data.channels.filter(item.id != id);
+    res.status(200).end();
+    console.log('DELETE', data.channels)
+})
+```
+
+## NodeJS y Mysql, app completa
+
+<https://www.youtube.com/watch?v=qJ5R9WTW0_E&t=1s>
+
