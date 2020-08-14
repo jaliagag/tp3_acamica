@@ -95,7 +95,15 @@ Structure of JWTs:
 - **asdfjñlksajdfkajsdñfkjsad**._kdslkjdsañlkdsñlkdslkj_.kjalsdfldsañlkjfasdfj
   - **JWT header** : contains the metadata about the JWT suchas the type of token and the crypto algorithm used to secure it
   - _the Payload_: the set of claims contained within a JWT that is represented as a series of key/value pairs
-  - the signature: this is used to validate that the JWT has not been tampered with and is generated using the header + payload + sign key or passphrase
+  - the signature: this is used to validate that the JWT has not been tampered with and is generated using the header + payload + sign key or passphrase.
+
+User information is stored on the client machine, on the JWT.
+
+<https://www.youtube.com/watch?v=7Q17ubqLfaM>
+
+JWT is used for _authorization_, not authentication; with authentication, you are taking a username and password and making sure that they are correct, like looging in. Authorization is making sure that the user making requests to your server is the same user that logged in during the authentication process. It's authrozing that the user has access to a particular system.
+
+This is typically donde by using _session_. In stead of using cookies, we use jsons when using JWT
 
 ## Express Middlewares
 
@@ -121,3 +129,69 @@ const sup = (req, res, next) => {
 app.use(sup);
 ```
 
+When it comes to middlewares, order _matters_.
+
+```js
+// this is a global middleware, it will run everytime a call is made to the app
+app.use(<middlewareName>);
+
+app.get('/', <middleware>, (req, res) => {
+    // this middleware is a "path specific middlware"
+    // when a user attempts to reach this route, first the mw runs, and then the req, res
+    res.send('<h1>Hello world!</h1>');
+});
+```
+
+If there is not `next()` function, we will never reach the next step, the next callback.
+
+```js
+// error handling function/example
+function errorHandler (err, req, res, next) {
+    if (err) {
+        res.send('alto fallo, loco');
+    }
+}
+```
+
+<https://www.youtube.com/watch?v=lY6icfhap2o>
+
+Middleware: a function, software, or something that is going to run between the time that the server gets the request and the time that the server sends the request out to the client. Apparently, everything in Express is a middlware.
+
+```js
+const express = require('express');
+const app = express();
+
+// global middleware
+
+app.use(logger)
+
+app.get('/', (req, res){
+    res.send('Home page');
+})
+
+app.get('/users', auth, (req, res){
+    console.log(`User is admin = ${req.admin}`)
+    res.send('Users Page');
+})
+
+function logger (req, res, next) {
+    console.log('Log');
+    console.log(req.originalUrl)
+    next(); // the next piece of middleware is run after
+}
+
+function auth (req, res, next) {
+    if (req.query.admin === 'true'){
+        req.admin = true;
+        next(); // https://localhost:3000/users?admin=true
+    } else {
+        res.send('No Auth');
+    }
+    console.log('Auth');
+    next();
+}
+
+app.listen(3000, (req, res) => {
+    console.log('Servidor iniciado');
+})
+```
