@@ -1,0 +1,630 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "REST API DELILAH RESTO",
+    "description": "A REST API for managing orders, products and users. In this API you can allow users to register and login and manage products and orders.",
+    "version": "1.0.0"
+  },
+  "externalDocs": {
+    "description": "Find out more about this REST API",
+    "url": "https://github.com/leidymgdev/delilah-api-rest-nodejs/tree/master/server"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8081/api/v1"
+    }
+  ],
+  "tags": [
+    {
+      "name": "users",
+      "description": "Everything about users"
+    },
+    {
+      "name": "products",
+      "description": "Everything about products"
+    },
+    {
+      "name": "orders",
+      "description": "Everything about orders"
+    }
+  ],
+  "paths": {
+    "/users": {
+      "post": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Create a new user",
+        "description": "Create an user if username or email don't exist yet. (roleId is an optional parameter. It will be saved with id 1 if the property does not come in the request. Id 2 makes for admin privileges and id 1 is for a normal client). (roleId data are in https://github.com/leidymgdev/delilah-api-rest-nodejs/blob/master/server/repository/seeders/data/roles.js)",
+        "operationId": "createUser",
+        "requestBody": {
+          "description": "User object",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "successful login"
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {}
+          },
+          "401": {
+            "description": "Bad credentials.",
+            "content": {}
+          },
+          "409": {
+            "description": "Resource already exists.",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      }
+    },
+    "/users/login": {
+      "post": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Login user",
+        "description": "User can login with email or username, and a password. If login is succesfully generated a token. This endpoint responses a token. This token must be used in the Headers with auth-token key for others endpoints (products and orders).",
+        "operationId": "loginUser",
+        "requestBody": {
+          "description": "User object",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "successful login"
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {}
+          },
+          "401": {
+            "description": "Bad credentials.",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      }
+    },
+    "/products": {
+      "post": {
+        "tags": [
+          "products"
+        ],
+        "summary": "Create a new product",
+        "description": "Create a new product. Can only be done by administrator users and you need to send the token in the Headers with auth-token key.",
+        "operationId": "createProduct",
+        "parameters": [
+          {
+            "name": "auth-token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "description": "Product object",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Product"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/Product"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      },
+      "get": {
+        "tags": [
+          "products"
+        ],
+        "summary": "Get all products",
+        "description": "Returns all products. You need to send the token in the Headers with auth-token key.",
+        "operationId": "getAllProducts",
+        "parameters": [
+          {
+            "name": "auth-token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      }
+    },
+    "/products/{id}": {
+      "put": {
+        "tags": [
+          "products"
+        ],
+        "summary": "Update a product",
+        "description": "Update a product. Can only be done by administrator users and you need to send the token in the Headers with auth-token key.",
+        "operationId": "updateProduct",
+        "parameters": [
+          {
+            "name": "auth-token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Product id to update",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Product object",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Product"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/Product"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {}
+          },
+          "404": {
+            "description": "Resource does not exist.",
+            "content": {}
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "products"
+        ],
+        "summary": "Delete a product",
+        "description": "Delete a product. Can only be done by administrator users and you need to send the token in the Headers with auth-token key.",
+        "operationId": "deleteProduct",
+        "parameters": [
+          {
+            "name": "auth-token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Product id to delete",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource removed successfully."
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {}
+          },
+          "404": {
+            "description": "Resource does not exist.",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/orders": {
+      "post": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Create a new order",
+        "description": "Create an order and its order details. It validate if all the products to be inserted in the order detail exist. If there is a product that does not exist, it does not insert anything and returns an error. You need to send the token in the Headers with auth-token key. (paymentMethodId data are in https://github.com/leidymgdev/delilah-api-rest-nodejs/blob/master/server/repository/seeders/data/paymentMethods.js)",
+        "operationId": "createOrder",
+        "parameters": [
+          {
+            "name": "auth-token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "description": "Order object",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Order"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/Order"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      },
+      "get": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Get all orders",
+        "description": "Admin can see all orders and normal client only can see their orders. You need to send the token in the Headers with auth-token key.",
+        "operationId": "getAllOrders",
+        "parameters": [
+          {
+            "name": "auth-token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      }
+    },
+    "/orders/{id}": {
+      "get": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Get an order by id",
+        "description": "Admin can see whatever specific order and normal client only can see an order if its own. You need to send the token in the Headers with auth-token key.",
+        "operationId": "getAnOrder",
+        "parameters": [
+          {
+            "name": "auth-token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Order id to update",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {}
+          }
+        },
+        "x-codegen-request-body-name": "body"
+      },
+      "put": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Update an order",
+        "description": "This endpoint only update the order status. Can only be done by administrator users and you need to send the token in the Headers with auth-token key. (statusId data are in https://github.com/leidymgdev/delilah-api-rest-nodejs/blob/master/server/repository/seeders/data/statuses.js)",
+        "operationId": "updateOrder",
+        "parameters": [
+          {
+            "name": "auth-token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Order id to update",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Order object",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrderStatus"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/OrderStatus"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {}
+          },
+          "404": {
+            "description": "Resource does not exist.",
+            "content": {}
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "orders"
+        ],
+        "summary": "Delete an order and its order detail",
+        "description": "Delete an order and its order detail. Can only be done by administrator users and you need to send the token in the Headers with auth-token key.",
+        "operationId": "deleteOrder",
+        "parameters": [
+          {
+            "name": "auth-token",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Order id to delete",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resource removed successfully."
+          },
+          "400": {
+            "description": "Bad request.",
+            "content": {}
+          },
+          "404": {
+            "description": "Resource does not exist.",
+            "content": {}
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Product": {
+        "required": [
+          "description",
+          "price"
+        ],
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "example": "Menú"
+          },
+          "price": {
+            "type": "integer",
+            "format": "int64",
+            "example": 10000
+          }
+        },
+        "xml": {
+          "name": "Product"
+        }
+      },
+      "ProductOrder": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1
+          },
+          "quantity": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1
+          }
+        },
+        "xml": {
+          "name": "Order"
+        }
+      },
+      "User": {
+        "required": [
+          "email",
+          "password",
+          "username",
+          "fullname",
+          "cellphone",
+          "shippingAddress"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "myemail@email.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "mypassword"
+          },
+          "username": {
+            "type": "string",
+            "example": "myusername"
+          },
+          "fullname": {
+            "type": "string",
+            "example": "my full name"
+          },
+          "cellphone": {
+            "type": "string",
+            "example": "0123456789"
+          },
+          "shippingAddress": {
+            "type": "string",
+            "example": "my shipping address"
+          },
+          "roleId": {
+            "type": "integer",
+            "format": "int64",
+            "example": 2
+          }
+        },
+        "xml": {
+          "name": "User"
+        }
+      },
+      "Order": {
+        "type": "object",
+        "properties": {
+          "paymentMethodId": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1
+          },
+          "products": {
+            "type": "array",
+            "xml": {
+              "name": "product",
+              "wrapped": true
+            },
+            "items": {
+              "$ref": "#/components/schemas/ProductOrder"
+            }
+          }
+        },
+        "xml": {
+          "name": "Order"
+        }
+      },
+      "OrderStatus": {
+        "type": "object",
+        "properties": {
+          "statusId": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1
+          }
+        },
+        "xml": {
+          "name": "Order"
+        }
+      }
+    },
+    "securitySchemes": {
+      "apiKey": {
+        "type": "apiKey",
+        "name": "auth-token",
+        "in": "header"
+      }
+    }
+  }
+}
