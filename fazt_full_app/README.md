@@ -11,4 +11,4 @@
 - ``
 - `touch index.js database.js keys.js` - database.js - tiene la conexión a la mysql; keys.js nos permitirá almacenar claves o secretos para usar los servicios (número de puerto, dirección de la base de datos)
 
-32:15
+1:34
