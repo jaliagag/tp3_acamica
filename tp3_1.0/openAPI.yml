@@ -4,4 +4,12 @@ info:
     title: Delilah Resto
     version: 1.0.0
 paths:
-  
+  /: # debería ser delilah.resto.com.ar?
+    description: ''
+  /login:
+    description: ''
+  /user/{id}:
+    description: 'ver perfil'
+    # debería ir acá adentro el 
+  /admin:
+    description: 'ver los pedidos'
