@@ -256,7 +256,7 @@ El contenido del cuerpo en una petición o _request_. Si tenemos un formulario d
 }
 ```
 
-Para poder parsear, es de cir, analizar el contenido del body, es necesario procesar el contenido del body. La forma más sencilla de hacerlo en Express es agregando una librería como middleware que se va a encargar de parsearlo y dejar el contenido del body en `req.body`.
+Para poder parsear, es decir, analizar el contenido del body, es necesario procesar el contenido del body. La forma más sencilla de hacerlo en Express es agregando una librería como middleware que se va a encargar de parsearlo y dejar el contenido del body en `req.body`.
 
 La librería que debemos instalar y utilizar es `body-parser`:
 
@@ -336,7 +336,7 @@ app.post('/contacto', (req, res) => {
   }
   
   // Continua ejecucion del codigo
- 
+
 });
  ```
 

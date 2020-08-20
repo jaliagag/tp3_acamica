@@ -344,7 +344,7 @@ Si voy a interactuar entre el body y el servidor, necesito tener middlewares.
 
 ## Clase 46
 
-Vistas: se usan para generar los mismos datos repetitivamente. Hacer una consulta repetitiva que trae muchos datos. Se setea la consulta; 
+Vistas: se usan para generar los mismos datos repetitivamente. Hacer una consulta repetitiva que trae muchos datos. Se setea la consulta;
 
 Almacenamientos = datos.
 
