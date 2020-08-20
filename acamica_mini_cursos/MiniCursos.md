@@ -31,3 +31,71 @@ Módulos:
 3. propios
 
 CommonJS: cada archivo es un módulo.
+
+## Node como webserver
+
+```js
+var http = require('http'); // abre el puerto
+
+var server = http.createServer(function (req, res) {
+   res.writeHead(200, {"Content-Type": "text/html"});
+   res.end("<h1>Hola Mundo!</h1>");
+})
+
+server.listen(3000);
+
+console.log('Servidor iniciado en el puerto 3000');
+```
+
+## Contenido estático
+
+```js
+var http = require('http'); // abre el puerto
+var fs = require('fs')
+
+var server = http.createServer(function (req, res) {
+   console.log(req.url)
+   fs.readFile('./public/index.html', function (err, data) {
+      res.writeHead(200, {"Content-Type": "text/html"});
+      res.end(data);
+   })
+})
+
+server.listen(3000);
+
+console.log('Servidor iniciado en el puerto 3000');
+```
+
+Node-inspector. Es un paquete global. Prepara una página web para usar la consola de debugging. Para arrancar node-inspector usamos `node-inspector`.
+
+```bash
+## para debuggear
+node --debug server.js
+## para que no arranque de pecho el servidor usamos breakpoints
+node --debug-brk server.js
+## Dentro de la consola de debuggeo de node-inspector hacemos click en la línea donde queremos que se detenga el código
+```
+
+Poner `debugger` en mitad del código detendrá la ejecución del código en ese punto.
+
+Node es mejor para presentar contenido dinámico. Quién me está pidiendo la página? Esa respuesta está en la URL. 
+
+```js
+var http = require('http');
+var url = require('url');
+
+var server = http.createServer(function (req, res) { // Controlador, lo que dice es que cuando haya un pedido le voy a decir qué respuesta es la que se va a dar, es la que controla el flujo de nuestra app
+   var query = url.parse(req.url, true).query;
+   res.writeHead(200, ('Content-type': 'text/html'))
+   res.end('<h1>Hola ' + query.nombre + '!</h1>'); //query.nombre es modelo; la lógica de negocios
+   // toda la línea res.end representa la vista
+})
+
+server.listen(3000)
+console.log('servidor iniciado en el puerto 3000');
+
+// si yo corro http://localhost:3000/?nombre=Jose
+```
+
+## Express
+

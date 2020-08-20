@@ -6,27 +6,27 @@ const jwt = require('jsonwebtoken');
 
 // routes
 
-app.get('/delilah.resto.com.ar', (req, res) => {
+app.get('/', (req, res) => {
     res.json({
         body: 'home'
     })
 });
 
-app.get('/delilah.resto.com.ar/login', (req, res) => {
+app.get('/login', (req, res) => {
     res.json({
         body: 'login'
     })
 });
 
-app.get('/delilah.resto.com.ar/:usr', (req, res) => {
+app.get('/user', (req, res) => {
     res.json({
         body: 'user_home'
     })
 });
 
-app.get('/delilah.resto.com.ar/admin', (req, res) => {
+app.get('/login/admin', (req, res) => {
     res.json({
-        body: 'admin_home'
+        body: 'admin_login'
     })
 });
 
