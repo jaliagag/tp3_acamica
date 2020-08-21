@@ -5,11 +5,20 @@ info:
     version: 1.0.0
 paths:
   /: # debería ser delilah.resto.com.ar?
-    description: ''
+    get:
+        description: 'devuelve la página principal'
+        responses: 
+          200:
+            description: 'la página es accesible'
+          404:
+            description: 'hubo un error'
   /login:
-    description: ''
-  /user/{id}:
+    get:
+      description: 'obtiene la página de inicio'
+    post:
+      description: 'envía información de inicio de sesión'
+  /users/{id}:
     description: 'ver perfil'
     # debería ir acá adentro el 
-  /admin:
+  /admins:
     description: 'ver los pedidos'
