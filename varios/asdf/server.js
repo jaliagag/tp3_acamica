@@ -1,12 +1,21 @@
 const express = require('express');
 const app = express();
+
 const jwt = require('jsonwebtoken');
 const key = require('./key');
+const apiRouter = require('./routes');
+
 const port = 3000;
 
 // db connection
 
+// middlewares
 
+app.use(express.json())
+
+app.use('/api/chirps', apiRouter)
+
+// routes - delete?
 
 app.get('/', (req, res) => {
     res.json({
