@@ -17,8 +17,35 @@ paths:
       description: 'obtiene la página de inicio'
     post:
       description: 'envía información de inicio de sesión'
+  /register:
+    get:
+      description: 'obtiene la página para registrarse'
+        responses:
+          200:
+            description: 'OK'
+          400:
+            description: 'Bad input information'
+          500:
+            description: 'Internal server error'
+    post:
+      description: 'envía la información para el registro'
+      produces: 'application/json'
+      parameters:
+      
+  
   /users/{id}:
     description: 'ver perfil'
     # debería ir acá adentro el 
   /admins:
     description: 'ver los pedidos'
+
+  /orders:
+  /order:
+    description: 'make an order'
+    /confirmation:
+    /status:
+  /login:
+  /register:
+  /users:
+  /admin:
+  /login:
