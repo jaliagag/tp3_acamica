@@ -12,21 +12,21 @@ paths:
             description: 'la página es accesible'
           404:
             description: 'hubo un error'
-  /login:
+  login:
     get:
       description: 'obtiene la página de inicio'
     post:
       description: 'envía información de inicio de sesión'
-  /register:
+  register:
     get:
       description: 'obtiene la página para registrarse'
-        responses:
-          200:
-            description: 'OK'
-          400:
-            description: 'Bad input information'
-          500:
-            description: 'Internal server error'
+      responses:
+        200:
+          description: 'OK'
+        400:
+          description: 'Bad input information'
+        500:
+          description: 'Internal server error'
     post:
       description: 'envía la información para el registro'
       produces: 'application/json'
